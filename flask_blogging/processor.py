@@ -54,6 +54,13 @@ class PostProcessor(object):
         post["meta"] = md.Meta
 
     @classmethod
+    def render_until(cls, post):
+        md = markdown.Markdown(extensions=cls.all_extensions())
+        post_chopped = post["text"].split("""[//]: # (""")[0]
+        post["rendered_until"] = md.convert(post_chopped)
+        post["meta"] = md.Meta
+
+    @classmethod
     def is_author(cls, post, user):
         return user.get_id() == u''+str(post['user_id'])
 
@@ -71,6 +78,7 @@ class PostProcessor(object):
         post["priority"] = 0.8
         if render:
             cls.render_text(post)
+            cls.render_until(post)
 
     @classmethod
     def all_extensions(cls):
